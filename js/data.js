@@ -106,7 +106,7 @@
   }
 
   FD.loadLive = async function () {
-    const res = await fetch("/api/universe");
+    const res = await fetch("/api/universe", { signal: AbortSignal.timeout(35000) });
     if (!res.ok) throw new Error("data API responded " + res.status);
     const data = await res.json();
     if (!data.stocks || data.stocks.length < 20) throw new Error("data source returned too few stocks");

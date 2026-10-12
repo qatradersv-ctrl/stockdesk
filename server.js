@@ -512,10 +512,14 @@ const server = http.createServer((req, res) => {
   const json = (code, obj) => { res.writeHead(code, { "Content-Type": "application/json", "Cache-Control": "no-cache" }); res.end(JSON.stringify(obj)); };
 
   if (url === "/api/universe") {
-    getUniverse(req.url.includes("force=1")).then(r =>
-      r.stocks.length ? json(200, { asof: r.asof || Date.now(), count: r.stocks.length, src: r.src, refreshing: !!r.refreshing, stocks: r.stocks })
-        : json(502, { error: "data source unavailable" }));
-    return;
+  getUniverse(req.url.includes("force=1")).then(r =>
+    r.stocks.length ? json(200, { asof: r.asof || Date.now(), count: r.stocks.length, src: r.src, refreshing: !!r.refreshing, stocks: r.stocks })
+    : json(502, { error: "data source unavailable" })
+  ).catch(err => {
+    console.error("Universe request failed", err.message);
+    json(504, { error: "market data timed out" });
+  });
+  return;
   }
   if (url === "/api/tickers") {
     getTickers().then(list => json(200, { asof: Date.now(), tickers: list }));
