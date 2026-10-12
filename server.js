@@ -13,7 +13,7 @@ const CACHE_TTL = 6 * 3600 * 1000;
    fields the UI now reads, and serving it silently would show blanks as if they were zeros. */
 const ROW_SHAPE = 7;
 const YF_BASE = process.env.YF_BASE || "http://127.0.0.1:8765";
-const SYMBOLS = JSON.parse(fs.readFileSync(path.join(ROOT, "datasource", "symbols.json"), "utf8"));
+const SYMBOLS = require("./datasource/symbols.json");
 const backtest = require("./backtest.js");
 
 /* .env is read for GROQ_API_KEY / GROQ_MODEL only — the key never reaches the browser. */
@@ -506,8 +506,8 @@ async function getBars(sym) {
   return r;
 }
 
-/* ---------- HTTP server ---------- */
-const server = http.createServer((req, res) => {
+/* ---------- HTTP request handler (also reused as a Vercel serverless function) ---------- */
+function handler(req, res) {
   const url = decodeURIComponent(req.url.split("?")[0]);
   const json = (code, obj) => { res.writeHead(code, { "Content-Type": "application/json", "Cache-Control": "no-cache" }); res.end(JSON.stringify(obj)); };
 
@@ -654,19 +654,27 @@ const server = http.createServer((req, res) => {
   if (!fs.existsSync(file) || fs.statSync(file).isDirectory()) { res.writeHead(404); return res.end("not found"); }
   res.writeHead(200, { "Content-Type": MIME[path.extname(file)] || "application/octet-stream", "Cache-Control": "no-cache" });
   fs.createReadStream(file).pipe(res);
-});
+}
 
-server.listen(PORT, async () => {
-  console.log(`FactorDesk running at http://localhost:${PORT}`);
-  spawnYfService();
-  let alive = false;
-  const deadline = Date.now() + 25000;
-  while (!alive && Date.now() < deadline) { alive = !!(await yfJson("/health", 1200)); if (!alive) await new Promise(r => setTimeout(r, 700)); }
-  console.log(alive ? "Warming market data cache from yfinance…" : "Warming market data cache (direct Yahoo)…");
-  let r = await getUniverse();
-  if (alive && !/yfinance/.test(r.src)) r = await getUniverse(true); // cached fallback is missing statement metrics
-  console.log(`Universe ready: ${r.stocks.length} real stocks via ${r.src}.`);
-  console.log(process.env.GROQ_API_KEY
-    ? `Groq analysis writer: ON (${GROQ_MODEL})`
-    : "Groq analysis writer: OFF — copy .env.example to .env and paste GROQ_API_KEY to enable the plain-English write-ups.");
-});
+const server = http.createServer(handler);
+module.exports = { handler, server };
+
+/* Only start the long-running server (and spawn the Python yfinance service) when this file is
+   run directly. On Vercel it is require()'d by the api/[...path].js function, which must not bind
+   a port or spawn a child process. */
+if (require.main === module) {
+  server.listen(PORT, async () => {
+    console.log(`FactorDesk running at http://localhost:${PORT}`);
+    spawnYfService();
+    let alive = false;
+    const deadline = Date.now() + 25000;
+    while (!alive && Date.now() < deadline) { alive = !!(await yfJson("/health", 1200)); if (!alive) await new Promise(r => setTimeout(r, 700)); }
+    console.log(alive ? "Warming market data cache from yfinance…" : "Warming market data cache (direct Yahoo)…");
+    let r = await getUniverse();
+    if (alive && !/yfinance/.test(r.src)) r = await getUniverse(true); // cached fallback is missing statement metrics
+    console.log(`Universe ready: ${r.stocks.length} real stocks via ${r.src}.`);
+    console.log(process.env.GROQ_API_KEY
+      ? `Groq analysis writer: ON (${GROQ_MODEL})`
+      : "Groq analysis writer: OFF — copy .env.example to .env and paste GROQ_API_KEY to enable the plain-English write-ups.");
+  });
+}
