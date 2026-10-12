@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FactorDesk — Data-driven stock research, made transparent</title>
+<meta name="description" content="Free, open, rules-based stock research platform. Transparent Quality, Value, Momentum and Growth scoring, powerful screener, stock reports and portfolio analytics.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="css/main.css?v=87">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>▤</text></svg>">
+</head>
+<body>
+<nav class="site-nav">
+  <a class="brand" href="index.html"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span> Factor<span>Desk</span></a>
+  <div class="nav-links">
+    <a href="#scoring">Scoring</a>
+    <a href="#features">Features</a>
+    <a href="#market-notes">Headlines</a>
+    <a href="#evidence">Evidence</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <div class="nav-actions">
+    <button class="icon-btn" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg></button>
+    <a class="btn btn-primary" href="app.html#/rankings">Open the app</a>
+  </div>
+</nav>
+<div class="tape" id="tape"><div class="tape-track"><span class="tape-item">Loading market data…</span></div></div>
+
+<header class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow">For active investors who hate black boxes</p>
+    <h1>Rank every stock on <em>open</em> Quality, Value,<br>Momentum &amp; Growth</h1>
+    <p class="hero-sub">FactorDesk scores every company you screen from 0–100 using formulas we publish in full. No trademarks, no paid plans, no guesswork — just data, discipline and one great screener.</p>
+    <div class="hero-cta">
+      <a class="btn btn-primary btn-lg" href="app.html#/rankings">See today's rankings</a>
+      <a class="btn btn-ghost btn-lg" href="app.html#/screener">Try the screener</a>
+    </div>
+    <ul class="hero-points">
+      <li>✓ Transparent formulas</li>
+      <li>✓ Custom scoring weights</li>
+      <li>✓ Free forever</li>
+    </ul>
+  </div>
+  <div class="hero-cards" id="hero-cards" aria-label="Current top-ranked live stocks"></div>
+</header>
+
+<section class="band stats-band">
+  <div class="stat"><strong id="stat-universe">—</strong><span>stocks scored</span></div>
+  <div class="stat"><strong>5</strong><span>open factors</span></div>
+  <div class="stat"><strong>18</strong><span>screenable metrics</span></div>
+  <div class="stat"><strong>£0</strong><span>forever</span></div>
+</section>
+
+<section class="section" id="problem">
+  <p class="eyebrow center">The problem</p>
+  <h2 class="center">Most stock tools ask you to trust them. We'd rather show you the maths.</h2>
+  <div class="grid grid-3">
+    <div class="card">
+      <h3>Proprietary black boxes</h3>
+      <p>"Award-winning" scores that cost hundreds a year and won't tell you how they're calculated. You can't improve what you can't inspect.</p>
+    </div>
+    <div class="card">
+      <h3>One-size rankings</h3>
+      <p>Premium platforms lock the blend of Quality, Value and Momentum into a single number. Your strategy isn't theirs — so why use their weighting?</p>
+    </div>
+    <div class="card">
+      <h3>Subscription fatigue</h3>
+      <p>Data you refresh a handful of times a month shouldn't rent by the year. FactorDesk runs entirely in your browser — no account, no paywall.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="scoring">
+  <div class="split">
+    <div>
+      <p class="eyebrow">The solution</p>
+      <h2>Scoring you can audit line by line</h2>
+      <p>Every metric is percentile-ranked across the universe, then combined into five published factor scores:</p>
+      <ul class="formula-list">
+        <li><b>Quality</b> = avg pct( ROCE ↑, health score ↑, gross margin ↑, net debt/equity ↓, interest cover ↑ )</li>
+        <li><b>Value</b> = avg pct( P/E ↓, P/BV ↓, free cash flow yield ↑, dividend yield ↑ )</li>
+        <li><b>Momentum</b> = avg pct( 12m price change ↑, 6m price change ↑, RSI(14) ↑ )</li>
+        <li><b>Growth</b> = avg pct( EPS growth ↑, revenue growth ↑, forward EPS growth ↑ )</li>
+        <li><b>Small Cap</b> = pct( 1 / market cap )</li>
+      </ul>
+      <p class="muted small">Live definitions: ROCE = EBIT ÷ average (shareholders' equity + total debt) over the latest two annual reports; interest cover = EBIT ÷ interest expense; health score counts how many of nine published thresholds a company clears. London listings are converted from pence to pounds before any ratio is taken. A metric a company doesn't report is scored a neutral 50 — it is never estimated.</p>
+      <p>Your headline <b>FactorRank</b> is a weighted blend you control — drag the sliders in the screener and the entire table re-ranks instantly. The default is the academically-backed 35% Quality / 25% Value / 25% Momentum / 10% Growth / 5% Size blend.</p>
+      <a class="btn btn-primary" href="app.html#/screener">Customise your weights →</a>
+    </div>
+    <div class="card score-demo">
+      <h3 id="demo-ticker">Today's top-ranked stock</h3>
+      <div id="demo-rows"></div>
+      <p class="muted small">Computed in your browser from the live universe — the card above is the current highest-ranked real stock right now, refreshed with each feed pull.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="features">
+  <p class="eyebrow">Platform</p>
+  <h2 class="center">Everything the £40/month platforms do — minus the bill</h2>
+  <div class="grid grid-3">
+    <div class="feature"><span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg></span><h3>Live screener</h3><p>Filter by country, sector, valuation, profitability and momentum, with sortable columns and strategy presets (QM Leaders, Deep Value, GARP, Sector Champions). Export any result to CSV and save named screens.</p></div>
+    <div class="feature"><span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 2h9l4 4v16H6V2zM14 2v5h5M9 12h7M9 16h7"/></svg></span><h3>Stock reports</h3><p>One-page report per company: price chart with trend overlays, relative performance against an equal-weight benchmark, factor radar, five years of reported statements and peer comparison bars.</p></div>
+    <div class="feature"><span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.3 1.1 6-5.4-2.9L6.6 19.7l1.1-6L3.2 9.4l6.1-.8L12 3z"/></svg></span><h3>Watchlists &amp; alerts</h3><p>Star stocks from anywhere in the app, annotate them, and set price or rank alerts that are checked against the live quote every time a page loads. Saved to your browser.</p></div>
+    <div class="feature"><span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></span><h3>Portfolio analytics</h3><p>Track holdings, P&amp;L, allocation donut, average FactorRank and concentration warnings — the discipline layer most retail tools skip.</p></div>
+    <div class="feature"><span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16l5-6 4 3 5-7M3 20h18"/></svg></span><h3>Analysis page</h3><p>One simplified screen for everything that moves a share price: trend breadth, volatility regime, yields, currency and commodity inputs, sector rotation, live movers and headlines — each stated with its own number.</p></div>
+    <div class="feature"><span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V9M10 20V4M16 20v-7M22 20H2"/></svg></span><h3>Evidence page</h3><p>We test our own rules: five years of real closes, point-in-time rebalances, excess return per rule with t-stats, hit rates, costs and drawdown — including the rules that lost money, and the biases we cannot remove.</p></div>
+    <div class="feature"><span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20V8M10 20V4M16 20v-9M21 12l-4-4-4 4"/></svg></span><h3>Custom FactorRanks</h3><p>Re-weight the five factors live and watch rankings reshuffle. Save your house style.</p></div>
+    <div class="feature"><span class="f-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor" stroke="none" opacity=".35"/></svg></span><h3>Dark &amp; light</h3><p>Built for long screen-staring sessions in either theme, on any screen size. Zero dependencies, loads instantly.</p></div>
+  </div>
+</section>
+
+<section class="section alt market-notes" id="market-notes">
+  <div class="market-notes-head">
+    <div><p class="eyebrow">From the market feed</p><h2>Read the headlines. Check the numbers.</h2>
+      <p class="muted">A few recent market stories, shown as published. Headlines are context—not a substitute for company data or independent research.</p></div>
+    <a class="btn btn-ghost" href="app.html#/media">Explore market media →</a>
+  </div>
+  <div class="landing-news-grid" id="landing-news"><p class="muted news-empty">Loading recent market headlines…</p></div>
+</section>
+
+<section class="section alt" id="evidence">
+  <p class="eyebrow">Evidence</p>
+  <h2 class="center">Do higher-ranked stocks actually do better?</h2>
+  <p class="center muted">Realised 12-month performance grouped by FactorRank decile across the live universe. In real markets, published academic research (Quality × Momentum × Value tilts) shows the same monotonic pattern.</p>
+  <div class="decile-card card">
+    <div id="decile-chart"></div>
+    <p class="small muted" id="decile-note"></p>
+  </div>
+</section>
+
+<section class="section" id="pricing">
+  <p class="eyebrow">Pricing</p>
+  <h2 class="center">One plan. It's free. It always will be.</h2>
+  <div class="grid grid-3 price-grid">
+    <div class="card price"><h3>FactorDesk</h3><div class="price-amount">£0<span>/yr</span></div>
+      <ul><li>Full screener + custom weights</li><li>Stock reports &amp; charts</li><li>Watchlists &amp; portfolios</li><li>Open formulas</li><li>No account, no ads, no tracking</li></ul>
+      <a class="btn btn-primary" href="app.html#/rankings">Start now</a></div>
+    <div class="card price dim"><h3>"Premium" platforms</h3><div class="price-amount">£360<span>/yr</span></div>
+      <ul><li>Proprietary score (opaque)</li><li>Fixed weighting you can't change</li><li>Paywall before you can evaluate it</li><li>Locked-in factor blends</li><li>Account &amp; renewal emails</li></ul>
+      <span class="btn btn-ghost disabled">No thanks</span></div>
+    <div class="card price dim"><h3>Doing nothing</h3><div class="price-amount">∞</div>
+      <ul><li>Tips and gut feel</li><li>No sell discipline</li><li>Story stocks at peak hype</li><li>Scattered, ad-heavy data</li><li>Anxiety, obviously</li></ul>
+      <span class="btn btn-ghost disabled">Been there</span></div>
+  </div>
+</section>
+
+<section class="section alt" id="faq">
+  <h2 class="center">Frequently asked questions</h2>
+  <div class="faq" id="faq-list"></div>
+</section>
+
+<section class="cta-band">
+  <h2>Put your investing on open data and fixed rules</h2>
+  <a class="btn btn-primary btn-lg" href="app.html#/rankings">Open FactorDesk — free</a>
+</section>
+
+<footer class="site-footer">
+  <div>
+    <a class="brand" href="index.html"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span> Factor<span>Desk</span></a>
+    <p class="muted small">An original, transparent stock-research platform inspired by the general feature set of modern equity screening tools — running on live market data.</p>
+  </div>
+  <div class="footer-cols">
+    <div><h4>App</h4><a href="app.html#/analysis">Analysis</a><a href="app.html#/screener">Screener</a><a href="app.html#/rankings">Rankings</a><a href="app.html#/portfolio">Portfolio</a></div>
+    <div><h4>Learn</h4><a href="#scoring">The formulas</a><a href="#evidence">Decile evidence</a><a href="#faq">FAQ</a></div>
+  </div>
+  <div class="footer-legal">
+    <p class="small muted"><b>Live data:</b> quotes, fundamentals and a year of prices come from Yahoo Finance via yfinance, delayed ~15 minutes; macro instruments (yields, volatility, FX, commodities, sector ETFs) come from the same feed. Nulls mean "not published", never zero. Nothing here is investment advice, and past performance is not a reliable indicator of future results. Always do your own research or consult a qualified adviser.</p>
+    <p class="small muted">© 2026 FactorDesk. Not affiliated with any named third party.</p>
+  </div>
+</footer>
+
+<script src="js/data.js?v=82"></script>
+<script src="js/landing.js?v=63"></script>
+</body>
+</html>

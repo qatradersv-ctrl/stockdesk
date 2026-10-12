@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FactorDesk App</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="css/main.css?v=87">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>▤</text></svg>">
+</head>
+<body class="app-body">
+<aside class="sidebar" id="sidebar">
+  <div class="side-top">
+    <a class="brand" href="index.html" title="FactorDesk"><span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span><span class="brand-word">Factor<span>Desk</span></span></a>
+    <button class="rail-toggle" id="rail-toggle" title="Collapse sidebar (press [)" aria-label="Collapse or expand sidebar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+  </div>
+  <nav class="side-nav">
+    <div class="nav-group"><p class="nav-label">Markets</p>
+      <a href="#/analysis" data-route="analysis" title="Analysis"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 5-8 4 5"/><path d="M3 21h18"/></svg></i><span>Analysis</span></a>
+      <a href="#/gaps" data-route="gaps" title="Gap scanner"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 8h6v8H4zM14 5h6v11h-6z"/><path d="M10 12h4"/></svg></i><span>Gap scanner</span></a>
+      <a href="#/media" data-route="media" title="Media"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h6M7 13h10M7 16h5"/></svg></i><span>Media</span></a>
+    </div>
+    <div class="nav-group"><p class="nav-label">Research</p>
+      <a href="#/rankings" data-route="rankings" title="Rankings"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg></i><span>Rankings</span></a>
+      <a href="#/screener" data-route="screener" title="Screener"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"/></svg></i><span>Screener</span></a>
+      <a href="#/sugar" data-route="sugar" title="Strategy presets"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg></i><span>Strategy presets</span></a>
+      <a href="#/evidence" data-route="evidence" title="Evidence"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V9M10 20V4M16 20v-7M22 20H2"/></svg></i><span>Evidence</span></a>
+    </div>
+    <div class="nav-group"><p class="nav-label">Decide</p>
+      <a href="#/signals" data-route="signals" title="Buy-sell signals"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 7 4-14 3 7h4"/></svg></i><span>Buy-sell signals</span></a>
+      <a href="#/opportunities" data-route="opportunities" title="Investment opportunities"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></i><span>Opportunities</span></a>
+      <a href="#/builder" data-route="builder" title="Portfolio builder"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></i><span>Portfolio builder</span></a>
+      <a href="#/calculator" data-route="calculator" title="Investment calculator"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h3M14 12h2M8 16h3M14 16h2"/></svg></i><span>Calculator</span></a>
+    </div>
+    <div class="nav-group"><p class="nav-label">Holdings</p>
+      <a href="#/watchlist" data-route="watchlist" title="Watchlist"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.3 1.1 6-5.4-2.9L6.6 19.7l1.1-6L3.2 9.4l6.1-.8L12 3z"/></svg></i><span>Watchlist</span><span class="nav-count" data-count="watch" hidden></span></a>
+      <a href="#/portfolio" data-route="portfolio" title="Portfolio"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/></svg></i><span>Portfolio</span><span class="nav-count" data-count="pf" hidden></span></a>
+    </div>
+  </nav>
+  <div class="side-foot">
+    <p class="side-status" id="side-status"><span class="mkt-dot"></span><span>Connecting to the live feed…</span></p>
+    <div class="search-box"><input id="global-search" type="search" placeholder="Search stocks…" autocomplete="off" aria-label="Search stocks"><kbd>/</kbd></div>
+  </div>
+</aside>
+<main class="app-main">
+  <header class="app-top">
+    <button class="icon-btn menu-btn" id="menu-btn" aria-label="Menu" aria-controls="sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+    <div id="crumb" class="crumb"></div>
+    <div class="app-top-actions">
+      <a href="#/watchlist" id="alert-flag" class="badge warn" hidden></a>
+      <span id="src-badge" class="badge">…</span>
+      <span id="feed-freshness" class="feed-freshness">Loading data snapshot…</span>
+      <button class="btn sm feed-refresh" id="refresh-live" type="button" title="Check for newer market data; the source snapshot may be cached for up to 6 hours" aria-label="Check for market data updates">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9a7 7 0 0 1 11.7-2L20 12M4 12l2.7 5a7 7 0 0 0 11.7-2"/></svg><span>Check</span>
+      </button>
+      <button class="icon-btn" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg></button>
+      <a class="btn btn-ghost sm" href="index.html">← Site</a>
+    </div>
+  </header>
+  <div class="tape" id="tape"><div class="tape-track"><span class="tape-item">Loading market data…</span></div></div>
+  <div id="view" class="view"></div>
+</main>
+<div id="popover" class="popover" hidden></div>
+
+<button class="chat-fab" id="chat-fab" aria-expanded="false" aria-controls="chat-dock" title="Ask the assistant (press c)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-8 8H8l-4 3v-6.5A8 8 0 1 1 21 12z"/><path d="M9 11h6M9 14h4"/></svg><span>Ask</span></button>
+<section class="chat-dock" id="chat-dock" role="dialog" aria-label="FactorDesk assistant" aria-modal="false" hidden>
+  <header class="c-head">
+    <div class="c-id"><span class="c-avatar" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></span>
+      <div class="c-title"><h3>FactorDesk</h3><p class="c-status"><span class="c-dot" id="chat-dot"></span><span id="chat-status">Connecting…</span><span class="c-status-label">· Research copilot</span></p></div></div>
+    <div class="c-tools"><button id="chat-max" class="icon-btn" title="Expand to full screen" aria-label="Expand or shrink assistant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button><button id="chat-clear" class="icon-btn" title="Delete this conversation" aria-label="Delete conversation" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13"/></svg></button><button id="chat-close" class="icon-btn" title="Close (Esc)" aria-label="Close assistant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  </header>
+  <div class="c-context"><span class="c-context-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span><span id="chat-ctx">Loading market context…</span></div>
+  <div class="c-log" id="chat-log" aria-live="polite"></div>
+  <div class="c-prompts"><div class="c-prompts-head"><span>Try asking</span><span class="c-prompts-hint">QUICK STARTS</span></div><div class="c-chips" id="chat-chips"></div></div>
+  <form class="c-form" id="chat-form">
+    <div class="c-composer">
+      <textarea id="chat-input" rows="1" placeholder="How can I help you today?" aria-label="Question for the assistant"></textarea>
+      <div class="c-bar">
+        <span class="c-model-chip" id="chat-powered" title="Answers are written by Groq from the measured facts on this screen">Groq</span>
+        <button class="c-send" id="chat-send" type="submit" aria-label="Send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6M6 12l6-6 6 6"/></svg></button>
+      </div>
+    </div>
+  </form>
+  <p class="c-foot">Grounded in measured data · Educational research, not investment advice</p>
+</section>
+<script src="js/data.js?v=82"></script>
+<script src="js/charts.js?v=80"></script>
+<script src="js/app.js?v=88"></script>
+<script src="js/chat.js?v=81"></script>
+</body>
+</html>

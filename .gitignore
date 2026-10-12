@@ -1,0 +1,17 @@
+# secrets — never commit the live key
+.env
+
+# local caches / scratch data
+.cache-history.json
+.cache-universe.json
+.logocache/
+datasource/.cache-yf.json
+datasource/__pycache__/
+
+# logs
+*.log
+
+# deps & OS cruft
+node_modules/
+.DS_Store
+Thumbs.db
