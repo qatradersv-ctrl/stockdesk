@@ -119,6 +119,67 @@
     });
   }
 
+  /* A search box + sector/market filter injected above every data table. It works purely on the
+     rendered rows, so it applies uniformly to rankings, screener, watchlist, portfolio, gaps,
+     signals and opportunities without each view having to opt in. Rows carry data-t, so the stock
+     lookup gives us sector/country for the dropdowns; tables whose rows aren't stocks just get the
+     text search. */
+  function addTableFilters() {
+    view.querySelectorAll("table.data").forEach(table => {
+      if (table.dataset.tf) return;
+      const rows = [...table.querySelectorAll("tbody tr")];
+      if (!rows.length) return;
+      table.dataset.tf = "1";
+      const stocks = rows.map(tr => tr.dataset.t && FD.get(tr.dataset.t)).filter(Boolean);
+      const isStockTable = stocks.length > 0;
+      const uniq = (arr) => [...new Set(arr)].sort((a, b) => a.localeCompare(b));
+      const sectors = isStockTable ? uniq(stocks.map(s => s.sector).filter(Boolean)) : [];
+      const markets = isStockTable ? uniq(stocks.map(s => s.country).filter(Boolean)) : [];
+      const opts = (list, all) => `<option value="">${all}</option>` + list.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join("");
+
+      const bar = document.createElement("div");
+      bar.className = "tbl-filter";
+      bar.innerHTML = `
+        <input type="search" class="tf-q" placeholder="Filter by ticker, name…" aria-label="Filter table by text" autocomplete="off">
+        ${isStockTable ? `<select class="tf-sec" aria-label="Filter by sector">${opts(sectors, "All sectors")}</select>
+        <select class="tf-mkt" aria-label="Filter by market">${opts(markets, "All markets")}</select>` : ""}
+        <button class="btn tf-clear" type="button" hidden>Clear</button>
+        <span class="tf-count muted small"></span>`;
+      const wrap = table.closest(".table-wrap") || table.closest("[style*='overflow-x']") || table.parentElement;
+      wrap.insertAdjacentElement("beforebegin", bar);
+
+      const qEl = bar.querySelector(".tf-q"), secEl = bar.querySelector(".tf-sec"),
+        mktEl = bar.querySelector(".tf-mkt"), clearEl = bar.querySelector(".tf-clear"),
+        countEl = bar.querySelector(".tf-count");
+
+      const apply = () => {
+        const q = qEl.value.trim().toLowerCase(), sec = secEl ? secEl.value : "", mkt = mktEl ? mktEl.value : "";
+        let shown = 0;
+        rows.forEach(tr => {
+          const s = tr.dataset.t && FD.get(tr.dataset.t);
+          const ok = (!q || tr.textContent.toLowerCase().includes(q))
+            && (!sec || (s && s.sector === sec))
+            && (!mkt || (s && s.country === mkt))
+            && (!(sec || mkt) || !!s);
+          tr.style.display = ok ? "" : "none";
+          if (ok) shown++;
+        });
+        countEl.textContent = `${shown} / ${rows.length}`;
+        clearEl.hidden = !(qEl.value || sec || mkt);
+      };
+      [qEl, secEl, mktEl].forEach(el => el && el.addEventListener("input", apply));
+      clearEl.onclick = () => { qEl.value = ""; if (secEl) secEl.value = ""; if (mktEl) mktEl.value = ""; apply(); qEl.focus(); };
+      apply();
+    });
+  }
+
+  /* Some tables (a stock report's fundamentals, dividend history) are filled in asynchronously after
+     the route renders, so a one-shot pass at navigation time misses them. This observer re-runs the
+     idempotent addTableFilters whenever the view's DOM changes, catching late-rendered tables too.
+     The data-tf guard makes each pass a no-op once a table is wired, so the mutation it causes can't
+     loop. */
+  new MutationObserver(() => addTableFilters()).observe(view, { childList: true, subtree: true });
+
   function rankedAll() { return FD.rankedWith(state.weights); }
   function wireRowClicks() {
     view.querySelectorAll("tr[data-t]").forEach(tr => tr.onclick = e => {
@@ -792,16 +853,121 @@
     view.querySelectorAll("input.note").forEach(inp => inp.onchange = () => FD.watchlist.note(inp.dataset.t, inp.value));
   }
 
+  /* ---------- add-holdings modal (categorized stock picker) ---------- */
+  function openAddHoldings() {
+    const sel = new Map();            // ticker -> qty
+    let groupBy = "sector";
+    const today = new Date().toISOString().slice(0, 10);
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    backdrop.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="Add holdings">
+      <div class="modal-head"><h3>Add holdings</h3>
+        <button class="modal-close" id="hold-x" aria-label="Close">✕</button></div>
+      <div class="modal-body">
+        <div class="hold-tools">
+          <input type="search" id="hold-q" placeholder="Search ticker or company…" autocomplete="off">
+          <label class="small muted" style="display:flex;align-items:center;gap:.35rem">Group by
+            <select id="hold-group" class="btn" style="padding:.35rem .5rem">
+              <option value="sector">Sector</option><option value="country">Market</option>
+            </select></label>
+          <label class="small muted" style="display:flex;align-items:center;gap:.35rem">Default qty
+            <input id="hold-defqty" type="number" min="1" value="100" class="qty-input"></label>
+        </div>
+        <div id="hold-list"></div>
+      </div>
+      <div class="modal-foot">
+        <span class="small muted" id="hold-count">Nothing selected — cost basis is today's live price, so each position starts at zero P&amp;L.</span>
+        <div style="display:flex;gap:.6rem">
+          <button class="btn" id="hold-cancel">Cancel</button>
+          <button class="btn btn-primary" id="hold-add" disabled>Add holdings</button>
+        </div>
+      </div>
+    </div>`;
+    document.body.appendChild(backdrop);
+
+    const listEl = $("#hold-list", backdrop);
+    const qEl = $("#hold-q", backdrop);
+    const defQtyEl = $("#hold-defqty", backdrop);
+    const addBtn = $("#hold-add", backdrop);
+
+    const onKey = e => { if (e.key === "Escape") realClose(); };
+    const realClose = () => { document.removeEventListener("keydown", onKey); backdrop.remove(); };
+    document.addEventListener("keydown", onKey);
+    $("#hold-x", backdrop).onclick = realClose;
+    $("#hold-cancel", backdrop).onclick = realClose;
+    backdrop.onclick = e => { if (e.target === backdrop) realClose(); };
+
+    function groups() {
+      const q = qEl.value.trim().toLowerCase();
+      const rows = FD.stocks.filter(s => !q || s.t.toLowerCase().includes(q) || String(s.name || "").toLowerCase().includes(q));
+      const by = {};
+      for (const s of rows) {
+        const k = groupBy === "country" ? (s.country || "Unspecified") : (s.sector || "Unspecified");
+        (by[k] = by[k] || []).push(s);
+      }
+      return Object.entries(by).sort((a, b) => b[1].length - a[1].length)
+        .map(([label, stocks]) => ({ label, stocks: stocks.sort((a, b) => live(b) - live(a)) }));
+    }
+
+    function itemRow(s) {
+      const on = sel.has(s.t);
+      const qty = on ? sel.get(s.t) : +defQtyEl.value || 100;
+      return `<div class="hold-item${on ? " sel" : ""}" data-t="${esc(s.t)}">
+        <input type="checkbox" ${on ? "checked" : ""} aria-label="Select ${esc(s.t)}">
+        ${logoHTML(s, "lg-sm")}<span class="tkr">${esc(s.t)}</span><span class="nm">${esc(s.name)}</span>
+        <span class="meta"><span class="px">${FD.fmt.px(s, s.metrics.price)}</span>${scorePill(live(s))}
+        <input class="qty-input" type="number" min="1" value="${qty}" ${on ? "" : "disabled"}></span></div>`;
+    }
+
+    function renderList() {
+      const gs = groups();
+      listEl.innerHTML = gs.map((g, i) => `<details class="hold-group"${i < 4 ? " open" : ""}>
+        <summary>${esc(g.label)}<span class="cnt">${g.stocks.length} names${i < 4 ? "" : " · click to expand"}</span></summary>
+        ${g.stocks.map(itemRow).join("")}</details>`).join("")
+        || '<p class="muted small">No stocks match that search.</p>';
+      const n = sel.size;
+      addBtn.disabled = !n;
+      addBtn.textContent = n ? `Add ${n} holding${n > 1 ? "s" : ""}` : "Add holdings";
+    }
+
+    listEl.addEventListener("change", e => {
+      const item = e.target.closest(".hold-item"); if (!item) return;
+      const t = item.dataset.t, s = FD.get(t);
+      if (e.target.type === "checkbox") {
+        if (e.target.checked) sel.set(t, +defQtyEl.value || 100); else sel.delete(t);
+        renderList();
+      } else if (e.target.classList.contains("qty-input")) {
+        sel.set(t, Math.max(1, +e.target.value || 1));
+      }
+    });
+    qEl.addEventListener("input", renderList);
+    $("#hold-group", backdrop).onchange = e => { groupBy = e.target.value; renderList(); };
+    defQtyEl.addEventListener("input", renderList);
+
+    addBtn.onclick = () => {
+      sel.forEach((qty, t) => { const s = FD.get(t); if (s) FD.portfolio.upsert({ t, qty: Math.max(1, qty), avg: s.metrics.price, date: today }); });
+      realClose();
+      toast(`${sel.size} holding${sel.size > 1 ? "s" : ""} added to portfolio`);
+      rerender();
+    };
+
+    renderList();
+    qEl.focus();
+  }
+
   /* ---------- portfolio ---------- */
   function renderPortfolio() {
     $("#crumb").textContent = "Portfolio";
     const pf = FD.portfolio.all();
     if (!pf.length) {
       view.innerHTML = `<div class="empty-state"><div class="big">▦</div><h3>No holdings yet</h3>
-        <p>Add your real positions from any stock report, or build a top-ranked basket priced at today's live quote — cost basis equals today's price, so it starts at zero profit rather than an invented one.</p>
+        <p>Add your real positions from a categorized picker, or build a top-ranked basket priced at today's live quote — cost basis equals today's price, so it starts at zero profit rather than an invented one.</p>
         <div style="display:flex;gap:.7rem;justify-content:center">
-        <a class="btn btn-primary" href="#/rankings">Pick from rankings</a>
+        <button class="btn btn-primary" id="add-hold">Add holdings</button>
+        <a class="btn" href="#/rankings">Browse rankings</a>
         <button class="btn" id="seed-qm">Build top-10 FactorRank basket</button></div></div>`;
+      $("#add-hold").onclick = openAddHoldings;
       $("#seed-qm").onclick = () => {
         const today = new Date().toISOString().slice(0, 10);
         rankedAll().slice(0, 10).forEach((s, i) => FD.portfolio.upsert({ t: s.t, qty: Math.round(900 / (i + 1)), avg: s.metrics.price, date: today }));
@@ -826,6 +992,10 @@
     const bench = (() => { const xs = vals.map(p => p.s.metrics.perf12).filter(v => v != null); return xs.length ? xs.reduce((x, v) => x + v, 0) / xs.length : null; })();
 
     view.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-bottom:.9rem">
+      <h2 style="margin:0">Portfolio</h2>
+      <button class="btn btn-primary" id="add-hold">Add holdings</button>
+    </div>
     <div class="pf-cards">
       <div class="mini-card"><div class="mc-label">Value</div><div class="mc-value">${FD.fmt.num(totalMV / 1000, 1)}k</div><div class="muted small">${vals.length} positions</div></div>
       <div class="mini-card"><div class="mc-label">Profit &amp; loss</div><div class="mc-value ${pl >= 0 ? "pos" : "neg"}">${pl >= 0 ? "+" : ""}${FD.fmt.num(pl / 1000, 1)}k</div><div class="muted small">${FD.fmt.pct(plPct)}</div></div>
@@ -853,6 +1023,7 @@
       </div>
     </div>`;
     FD.donut($("#alloc"), segs, FD.fmt.num(totalMV / 1000, 0) + "k");
+    $("#add-hold").onclick = openAddHoldings;
     view.querySelectorAll("[data-del]").forEach(b => b.onclick = e => { e.stopPropagation(); FD.portfolio.remove(b.dataset.del); rerender(); });
     view.querySelectorAll("tr[data-t]").forEach(tr => tr.onclick = e => { if (!e.target.closest(".del-btn")) location.hash = "#/stock/" + tr.dataset.t; });
   }
@@ -1648,6 +1819,7 @@
     view.classList.remove("flash"); void view.offsetWidth; view.classList.add("flash");
     if (m) renderStock(m[1]);
     else (routes[(hash.replace(/^#\/|\?.*$/g, "")) || "rankings"] || renderRankings)();
+    addTableFilters();
     alertFlag();
     const route = hash.replace(/^#\/|\?.*$/g, "");
     const activeRoute = m ? "" : (routes[route] ? route : "rankings");

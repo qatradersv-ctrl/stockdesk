@@ -443,6 +443,12 @@ table.data tbody tr:hover{background:color-mix(in srgb,var(--accent2) 7%,var(--p
 .star-btn:hover{color:var(--amber)}
 .star-btn.on{color:var(--amber)}
 .table-note{padding:.65rem 1rem;font-size:.76rem;color:var(--muted);border-top:1px solid var(--line);background:var(--panel2)}
+.tbl-filter{display:flex;flex-wrap:wrap;align-items:center;gap:.55rem;margin-bottom:.55rem}
+.tbl-filter .tf-q{flex:1;min-width:170px;background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:.45rem .65rem;font-size:.82rem}
+.tbl-filter .tf-q:focus{outline:none;border-color:var(--accent2)}
+.tbl-filter select{background:var(--panel);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:.42rem .55rem;font-size:.8rem;max-width:200px}
+.tbl-filter .tf-clear{padding:.4rem .7rem;font-size:.78rem}
+.tbl-filter .tf-count{margin-left:auto;font-variant-numeric:tabular-nums}
 canvas.spark{width:72px;height:24px;display:inline-block;vertical-align:middle}
 
 /* stock page */
@@ -521,6 +527,29 @@ canvas.chart{width:100%;display:block}
 .popover{position:fixed;z-index:90;background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);box-shadow:var(--shadow);padding:1rem;max-width:340px}
 .mkt-dot{width:7px;height:7px;border-radius:50%;background:var(--good);display:inline-block;margin-right:.35rem;animation:pulse 2.2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* add-holdings modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(10,14,24,.55);backdrop-filter:blur(2px);z-index:95;display:flex;align-items:center;justify-content:center;padding:1.2rem;animation:fadein .15s}
+.modal{background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);box-shadow:var(--shadow);width:min(760px,100%);max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:1rem 1.2rem;border-bottom:1px solid var(--line)}
+.modal-head h3{margin:0}
+.modal-body{padding:1rem 1.2rem;overflow:auto;flex:1}
+.modal-foot{display:flex;align-items:center;justify-content:space-between;gap:.8rem;padding:.9rem 1.2rem;border-top:1px solid var(--line);background:var(--panel2)}
+.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.2rem;line-height:1;padding:.1rem .4rem}
+.modal-close:hover{color:var(--txt)}
+.hold-tools{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin-bottom:.9rem}
+.hold-tools input[type=search]{flex:1;min-width:180px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;color:var(--txt);padding:.5rem .7rem}
+.hold-group{border:1px solid var(--line);border-radius:var(--radius);margin-bottom:.6rem;overflow:hidden}
+.hold-group>summary{display:flex;align-items:center;gap:.55rem;padding:.6rem .85rem;font-weight:700;font-size:.82rem;cursor:pointer;list-style:none;background:var(--panel2)}
+.hold-group>summary::-webkit-details-marker{display:none}
+.hold-group>summary .cnt{margin-left:auto;color:var(--muted);font-weight:600;font-size:.75rem}
+.hold-item{display:flex;align-items:center;gap:.6rem;padding:.45rem .85rem;border-top:1px solid var(--line);cursor:pointer}
+.hold-item:hover{background:var(--panel2)}
+.hold-item input{width:16px;height:16px;accent-color:var(--accent2);flex:none}
+.hold-item .nm{color:var(--muted);font-size:.78rem;margin-left:.4rem}
+.hold-item .meta{margin-left:auto;display:flex;align-items:center;gap:.6rem;font-size:.78rem;color:var(--muted)}
+.hold-item .qty-input{width:64px;background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--txt);padding:.2rem .4rem;font-size:.78rem}
+.hold-item.sel .meta .px{color:var(--txt)}
 
 /* ---------- analysis: signal chips ---------- */
 .chip-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
