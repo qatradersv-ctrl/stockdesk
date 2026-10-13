@@ -3,6 +3,9 @@
   "buildCommand": null,
   "installCommand": null,
   "functions": {
-    "api/[...path].js": { "maxDuration": 60 }
-  }
+    "api/index.js": { "maxDuration": 60 }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api" }
+  ]
 }
